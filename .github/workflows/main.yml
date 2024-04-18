@@ -13,7 +13,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const github = require('@actions/github');
 
             const context = github.context;
             const owner = context.payload.repository.owner.login;
