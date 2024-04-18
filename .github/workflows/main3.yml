@@ -5,8 +5,18 @@ on:
     types: [created]
 
 jobs:
+  install-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install @octokit/rest
+
   respond:
     runs-on: ubuntu-latest
+    needs: install-deps
     steps:
       - name: Check if comment contains "hello"
         uses: actions/github-script@v5
