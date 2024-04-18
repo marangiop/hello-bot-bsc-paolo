@@ -1,4 +1,4 @@
-name: Hello Bot
+name: Respond to Hello
 
 on:
   issue_comment:
@@ -13,20 +13,18 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const comment = context.payload.comment.body.toLowerCase();
-            const isHello = comment.includes('hello');
+            const { comment } = context.payload;
+            const isHello = comment.body.toLowerCase().includes('hello');
 
             if (isHello) {
-              const owner = context.payload.repository.owner.login;
-              const repo = context.payload.repository.name;
-              const issue_number = context.payload.issue.number;
+              const { owner, repo, number } = context.issue;
+              const response = 'Hello! How can I assist you?';
 
-              const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
-
+              const octokit = new github.getOctokit(process.env.GITHUB_TOKEN);
               await octokit.issues.createComment({
                 owner,
                 repo,
-                issue_number,
-                body: 'Hello! How can I assist you?'
+                issue_number: number,
+                body: response
               });
             }
