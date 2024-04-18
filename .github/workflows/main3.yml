@@ -13,11 +13,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const { Octokit } = require('@octokit/rest');
+            const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
             const { comment } = context.payload;
             const isHello = comment && comment.body.toLowerCase().includes('hello');
 
             if (isHello) {
-              const octokit = new github.getOctokit(process.env.GITHUB_TOKEN);
               const { owner, repo, issue_number } = context.issue;
               const response = 'Hello! How can I assist you?';
 
