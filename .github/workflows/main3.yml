@@ -1,0 +1,32 @@
+name: Hello Bot
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  respond:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if comment contains "hello"
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comment = context.payload.comment.body.toLowerCase();
+            const isHello = comment.includes('hello');
+
+            if (isHello) {
+              const owner = context.payload.repository.owner.login;
+              const repo = context.payload.repository.name;
+              const issue_number = context.payload.issue.number;
+
+              const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
+
+              await octokit.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: 'Hello! How can I assist you?'
+              });
+            }
