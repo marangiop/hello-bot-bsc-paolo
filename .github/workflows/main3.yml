@@ -17,10 +17,11 @@ jobs:
             const isHello = comment && comment.body.toLowerCase().includes('hello');
 
             if (isHello) {
+              const octokit = new github.getOctokit(process.env.GITHUB_TOKEN);
               const { owner, repo, issue_number } = context.issue;
               const response = 'Hello! How can I assist you?';
 
-              await github.issues.createComment({
+              await octokit.rest.issues.createComment({
                 owner,
                 repo,
                 issue_number,
