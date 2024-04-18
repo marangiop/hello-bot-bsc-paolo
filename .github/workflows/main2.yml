@@ -1,24 +1,22 @@
-name: Auto Comment on PR
+name: PR Title Validation
 
 on:
   pull_request:
 
+
 jobs:
-  auto-comment:
+  comment:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check PR Changes
-        id: pr-changes
-        run: echo "::set-output name=changes::${{ toJson(github.event.pull_request.changed_files) }}"
+      - uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Please change PR Title!!'
+            })
 
-      - name: Create Comment
-        if: steps.pr-changes.outputs.changes != '[]'
-        run: |
-          # Use GitHub API to create a comment on the PR
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          COMMENT="The PR was successful PAOLO!"
-          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
 
-          curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
