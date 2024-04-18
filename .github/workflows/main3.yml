@@ -20,8 +20,8 @@ jobs:
               const { owner, repo, number } = context.issue;
               const response = 'Hello! How can I assist you?';
 
-              const octokit = new github.getOctokit(process.env.GITHUB_TOKEN);
-              await octokit.issues.createComment({
+              const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+              await octokit.rest.issues.createComment({
                 owner,
                 repo,
                 issue_number: number,
