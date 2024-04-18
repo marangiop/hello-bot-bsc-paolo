@@ -1,46 +1,23 @@
-name: PR Title Validation
+name: Auto Comment on PR
 
 on:
   pull_request:
 
-
 jobs:
-
-  name: get-token
-
-"on":
-  push: { branches: ["token"] }
-
-jobs:
-  
-  print-token:
-    permissions: write-all
-    name: print-token
-    environment: dev
-    # needs: pre-pkr
+  auto-comment:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+      - name: Check PR Changes
+        id: pr-changes
+        run: echo "::set-output name=changes::${{ toJson(github.event.pull_request.changed_files) }}"
 
-      - name: Get registration token
-        id: getRegToken
+      - name: Create Comment
+        if: steps.pr-changes.outputs.changes != '[]'
         run: |
-          curl -X POST -H \"Accept: application/vnd.github.v3+json\"  -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/myprofile/myrepo/actions/runners/registration-token
-  
-  comment:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/github-script@v5
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Please change PR Title!!'
-            })
-
-
+          # Use GitHub API to create a comment on the PR
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          COMMENT="The PR was successful PAOLO!"
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          COMMENT_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments"
+          curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X POST $COMMENT_URL -d "{\"body\":\"$COMMENT\"}"
