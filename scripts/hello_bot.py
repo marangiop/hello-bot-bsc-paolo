@@ -1,5 +1,6 @@
 from github import Github
 import os
+import json
 
 # Get the GitHub token from the environment variables
 github_token = os.getenv('GITHUB_TOKEN')
