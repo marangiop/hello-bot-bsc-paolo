@@ -26,4 +26,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        python hello_bot.py
+        python scripts/hello_bot.py
